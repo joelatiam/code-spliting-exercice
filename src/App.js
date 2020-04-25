@@ -1,9 +1,10 @@
 /* eslint-disable no-unused-expressions */
-import React, {Component} from 'react';
+import React, {Component, Suspense} from 'react';
 import './App.css';
 import Page1 from './components/page1';
-import AsyncComponent from './components/AsyncComponent';
 
+const Page2Lazy = React.lazy(() => import('./components/page2'));
+const Page3Lazy = React.lazy(() => import('./components/page3'));
 class App extends Component {
   constructor(){
     super();
@@ -23,11 +24,17 @@ class App extends Component {
       case 'page1':
         return (<Page1 onRouteChange={this.onRouteChange}/>);
       case 'page2':
-          const AsyncPage2 = AsyncComponent(() => import('./components/page2'))
-          return (<AsyncPage2 onRouteChange={this.onRouteChange}/>);
+          return (
+              <Suspense fallback={<div>Loading...</div>}>
+                <Page2Lazy onRouteChange={this.onRouteChange}/>
+              </Suspense>
+            );
       case 'page3':
-        const AsyncPage3 = AsyncComponent(() => import('./components/page3'))
-        return (<AsyncPage3 onRouteChange={this.onRouteChange}/>);    
+        return (
+          <Suspense fallback={<div>Loading...</div>}>
+            <Page3Lazy onRouteChange={this.onRouteChange}/>
+          </Suspense>
+        );
       default:
         return(<h1>Page Not Found</h1>)
       
